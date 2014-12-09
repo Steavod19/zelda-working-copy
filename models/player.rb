@@ -10,30 +10,30 @@ class Player
   end
 
   def go_left
-    @x -= 5
+    @x -= 4
   end
 
   def go_right
-    @x += 5
+    @x += 4
   end
 
   def go_up
-    @y -= 5
+    @y -= 4
   end
 
   def go_down
-    @y += 5
+    @y += 4
   end
 
   def move
     @x += 0
     @y += 0
     @x %= 1000
-    @y %= 656
+    @y %= 520
   end
 
   def bounds
-    BoundingBox.new(@x, @y, 70, 60)
+    BoundingBox.new(@x, @y, 40, 50)
   end
 
   def draw

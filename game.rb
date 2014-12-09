@@ -10,10 +10,10 @@ require_relative 'models/bounding_box'
 
 class GameWindow < Gosu::Window
   def initialize
-    super(1000, 656, false)
+    super(1000, 520, false)
     self.caption = 'Link Zombie Battle HD2000'
 
-    @background_image = Gosu::Image.new(self, "img/Lost_Woods_opt.png", true)
+    @background_image = Gosu::Image.new(self, "img/water_background.png", true)
     @player = Player.new(self)
     @player.warp(320, 240)
     @enemies = Array.new
@@ -44,7 +44,7 @@ class GameWindow < Gosu::Window
         @player.go_down
       end
       @player.move
-      @enemy_counter += 1
+      @enemy_counter += 2
       summon_enemies
       @enemies.each {|enemy| enemy.update}
       player_killed?
@@ -70,16 +70,25 @@ class GameWindow < Gosu::Window
   end
 
   def summon_enemies
-    x_entry_point = [-50, 1050].sample
-    y_entry_point = [-30, 685].sample
+    x_entry_point = [86, 1050].sample
+    y_entry_point = [-30, 540].sample
     if @enemy_counter % 60 == 0
 
-      y_spawn = (255..405).to_a
-      x_spawn = (620..720).to_a
+      y_spawn_arr = Array.new
+      # y_spawn = (255..405).to_a
+      points_arr = [101..130, 192..220, 296..305, 392..400]
+      points_arr.each do |x|
+        y_spawn_arr << x.to_a
+      end
+      y_spawn = y_spawn_arr.flatten!
 
-      if x_entry_point == -50 || y_entry_point == -30
+
+
+      x_spawn = (415..570).to_a
+
+      if x_entry_point == 86 || y_entry_point == -30
         speed = (2..5).to_a
-      elsif x_entry_point == 1050 || y_entry_point == 685
+      elsif x_entry_point == 1050 || y_entry_point == 540
         speed = (-5..-2).to_a
       end
 
@@ -95,10 +104,12 @@ class GameWindow < Gosu::Window
   end
 
   def player_killed?
+    # player_health = 5
     @enemies.each do |enemy|
       if enemy.bounds.intersects?(@player.bounds)
-        exit
+        # player_health -= 1
         # @state = :lose
+        exit
       end
     end
   end
