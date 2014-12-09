@@ -17,6 +17,10 @@ class Enemy
     @image.draw(@x, @y, 1)
   end
 
+  # def flip
+  #   draw_rot(x, y, z, angle, center_x = 0.5, center_y = 0.5, factor_x = 1, factor_y = 1, color = 0xffffffff, mode = :default)
+  # end
+
   def update
     if @direction == :horizontal
       @x += @speed

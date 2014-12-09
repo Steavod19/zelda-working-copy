@@ -70,16 +70,26 @@ class GameWindow < Gosu::Window
   end
 
   def summon_enemies
+    x_entry_point = [-50, 1050].sample
+    y_entry_point = [-30, 685].sample
     if @enemy_counter % 60 == 0
+
       y_spawn = (255..405).to_a
-      x_spawn = (620..740).to_a
-      y_speed = (-5..-2).to_a
-      x_speed = (2..5).to_a
+      x_spawn = (620..720).to_a
+
+      if x_entry_point == -50 || y_entry_point == -30
+        speed = (2..5).to_a
+      elsif x_entry_point == 1050 || y_entry_point == 685
+        speed = (-5..-2).to_a
+      end
+
+
       number = (1..10).to_a
+
       if number.sample > 5
-        @enemies << Enemy.new(self, 1050, y_spawn.sample, :horizontal, y_speed.sample)
+        @enemies << Enemy.new(self, x_entry_point, y_spawn.sample, :horizontal, speed.sample)
       else
-        @enemies << Enemy.new(self, x_spawn.sample, -30, :vertical, x_speed.sample)
+        @enemies << Enemy.new(self, x_spawn.sample, y_entry_point, :vertical, speed.sample)
       end
     end
   end
