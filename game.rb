@@ -31,8 +31,8 @@ class GameWindow < Gosu::Window
     # if @state == :running
 
       if button_down? Gosu::KbLeft then
-        @player.go_left
-        # change to img/
+        @left = @player.go_left
+        @left
       end
       if button_down? Gosu::KbRight then
         @player.go_right
@@ -44,7 +44,7 @@ class GameWindow < Gosu::Window
         @player.go_down
       end
       @player.move
-      @enemy_counter += 2
+      @enemy_counter += 1
       summon_enemies
       @enemies.each {|enemy| enemy.update}
       player_killed?
@@ -61,7 +61,25 @@ class GameWindow < Gosu::Window
 
     # if @state != :menu
     #   if @state == :running
-    @player.draw
+    # @player.draw
+
+    if button_down? Gosu::KbLeft then
+      @player.draw_left
+    elsif button_down? Gosu::KbRight then
+      @player.draw_right
+    elsif button_down? Gosu::KbUp then
+      @player.draw_up
+    else
+      @player.draw
+    end
+
+
+
+    # if button_down? Gosu::KbRight then
+    #   @player.draw_right
+    # end
+
+
     @background_image.draw(0, 0, 0)
     @enemies.each {|enemy| enemy.draw}
     #   end
