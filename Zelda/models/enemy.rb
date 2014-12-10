@@ -1,6 +1,7 @@
 class Enemy
   def initialize(window, x, y, direction, speed)
     @image = Gosu::Image.new(window, "img/enemy.png", false)
+    # @swim_enemy = Gosu::Image.new(window, "img/swim_enemy.png", false)
     @x = x
     @y = y
     @direction = direction
@@ -17,7 +18,9 @@ class Enemy
     @image.draw(@x, @y, 1)
   end
 
-
+  # def draw_swim
+  #   @swim_enemy.draw(@x, @y, 1)
+  # end
 
   def update
     if @direction == :horizontal

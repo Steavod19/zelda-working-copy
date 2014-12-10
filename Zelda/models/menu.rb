@@ -10,13 +10,11 @@ class Menu
     @title = Gosu::Image.new(window, 'img/title_screen.png')
     @menu_action = nil
 
-
-
   end
 
   def draw
     @title.draw(@x, @y, 0)
-    @window.music == true ? @music_value = "ON" : @music_value = "OFF"
+    # @window.music == true ? @music_value = "ON" : @music_value = "OFF"
 
   end
 
