@@ -5,10 +5,14 @@ require 'pry'
 require_relative 'models/player'
 require_relative 'models/enemy'
 require_relative 'models/bounding_box'
-# require_relative 'models/menu'
+require_relative 'models/menu'
+require_relative 'models/background'
 
 
 class GameWindow < Gosu::Window
+
+  attr_reader :music
+
   def initialize
     super(1000, 520, false)
     self.caption = 'Link Zombie Battle HD2000'
@@ -18,21 +22,39 @@ class GameWindow < Gosu::Window
     @player.warp(320, 240)
     @enemies = Array.new
     @enemy_counter = 0
-    # @menu = Menu.new(self, 0, 0)
+    @menu = Menu.new(self, 0, 0, @music)
+    @state = :menu
+    @background = Background.new(self, 0, 0)
+    @music = true
+
   end
 
   def update
+    if @state == :menu
+      @background.menu_music.play
+    else
+      @background.menu_music.pause
+    end
+
+    if @state == :running
+      @background.game_music.play
+    else
+      @background.game_music.pause
+    end
+
+    if button_down? Gosu::KbSpace then
+      @state = :running
+    end
     # menu_action = @menu.update
     # if menu_action == "start"
     #   @state = :running
     # end
     # @menu.menu_action = nil
     #
-    # if @state == :running
+    if @state == :running
 
       if button_down? Gosu::KbLeft then
-        @left = @player.go_left
-        @left
+        @player.go_left
       end
       if button_down? Gosu::KbRight then
         @player.go_right
@@ -48,7 +70,7 @@ class GameWindow < Gosu::Window
       summon_enemies
       @enemies.each {|enemy| enemy.update}
       player_killed?
-    # end
+    end
 
     # if @state == :lose
     #   @enemies.each {|e| e.state == :pause}
@@ -57,33 +79,49 @@ class GameWindow < Gosu::Window
   end
 
   def draw
-    # @menu.draw if @state == :menu
+     if @state == :menu
+       @menu.draw
+     end
 
-    # if @state != :menu
-    #   if @state == :running
-    # @player.draw
+     if @state == :running
 
     if button_down? Gosu::KbLeft then
-      @player.draw_left
+      if button_down?Gosu::KbA then
+        @player.draw_strike_left
+      else
+        @player.draw_left
+      end
     elsif button_down? Gosu::KbRight then
-      @player.draw_right
+      if button_down?Gosu::KbA then
+        @player.draw_strike_right
+      else
+        @player.draw_right
+      end
     elsif button_down? Gosu::KbUp then
-      @player.draw_up
+      if button_down?Gosu::KbA then
+        @player.draw_strike_up
+      else
+        @player.draw_up
+      end
+    elsif button_down? Gosu::KbDown then
+      if button_down?Gosu::KbA then
+        @player.draw_strike_down
+      else
+        @player.draw
+      end
     else
       @player.draw
     end
 
 
 
-    # if button_down? Gosu::KbRight then
-    #   @player.draw_right
-    # end
-
-
     @background_image.draw(0, 0, 0)
     @enemies.each {|enemy| enemy.draw}
-    #   end
-    # end
+     end
+
+     if @state == :lose
+      #  @menu.lose_screen.draw
+     end
 
   end
 
@@ -122,12 +160,9 @@ class GameWindow < Gosu::Window
   end
 
   def player_killed?
-    # player_health = 5
     @enemies.each do |enemy|
       if enemy.bounds.intersects?(@player.bounds)
-        # player_health -= 1
-        # @state = :lose
-        exit
+        @state = :lose
       end
     end
   end
@@ -136,7 +171,7 @@ class GameWindow < Gosu::Window
   #   @menu = Menu.new(self, 0, 0)
   #   @player = Player.new(self, 400, 50)
   #   # @state = state
-  #   # @game_end = nil
+  #   @game_end = nil
   # end
 
 

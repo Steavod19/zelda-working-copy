@@ -4,6 +4,10 @@ class Player
     @image_left = Gosu::Image.new(window, "img/link_left.png", false)
     @image_right = Gosu::Image.new(window, "img/link_right.png", false)
     @image_up = Gosu::Image.new(window, "img/link_up.png", false)
+    @image_strike_right = Gosu::Image.new(window, "img/link_strike_right.png", false)
+    @image_strike_left = Gosu::Image.new(window, "img/link_strike_left.png", false)
+    @image_strike_up = Gosu::Image.new(window, "img/link_up_strike.png", false)
+    @image_strike_down = Gosu::Image.new(window, "img/link_down_strike.png", false)
     @x = @y = 0.0
     @score = 0
   end
@@ -14,7 +18,6 @@ class Player
 
   def go_left
     @x -= 3
-    # @player.draw_left
   end
 
   def go_right
@@ -37,7 +40,7 @@ class Player
   end
 
   def bounds
-    BoundingBox.new(@x, @y, 40, 50)
+    BoundingBox.new(@x, @y, 38, 41)
   end
 
   def draw
@@ -57,5 +60,20 @@ class Player
     @image_up.draw(@x, @y, 1)
   end
 
+  def draw_strike_left
+    @image_strike_left.draw(@x, @y, 1)
+  end
+
+  def draw_strike_right
+    @image_strike_right.draw(@x, @y, 1)
+  end
+
+  def draw_strike_up
+    @image_strike_up.draw(@x, @y, 1)
+  end
+
+  def draw_strike_down
+    @image_strike_down.draw(@x, @y, 1)
+  end
 
 end
