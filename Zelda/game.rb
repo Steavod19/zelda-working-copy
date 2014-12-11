@@ -34,15 +34,11 @@ class GameWindow < Gosu::Window
 
     @life = Array.new
     @player_health = 4
-
-
+    player_life
+    # binding.pry
 
     # @collision = nil
     # @new_pos = @player.move
-
-
-
-
 
   end
 
@@ -59,32 +55,80 @@ class GameWindow < Gosu::Window
       @background.game_music.pause
     end
 
-    if button_down? Gosu::KbSpace then
+    if button_down? Gosu::KbSpace
       @state = :running
     end
 
     if @state == :running
-      if button_down? Gosu::KbLeft then
-        @player.go_left
-        if button_down?Gosu::KbA then
+#exclusion boxes
+      if button_down? Gosu::KbUp
+        if (@player.x > 411 && @player.x < 560) && (@player.y > 0 && @player.y < 99)
+          @player.go_up
+        end
+        if button_down?Gosu::KbA
           enemy_killed?
         end
       end
-      if button_down? Gosu::KbRight then
-        @player.go_right
-        if button_down?Gosu::KbA then
+
+      if button_down? Gosu::KbLeft
+        if (@player.x > 411 && @player.x < 560) && (@player.y > 0 && @player.y < 98)
+          @player.go_left
+        end
+        if button_down?Gosu::KbA
           enemy_killed?
         end
       end
-      if button_down? Gosu::KbUp then
-        @player.go_up
-        if button_down?Gosu::KbA then
+
+      if button_down? Gosu::KbRight
+        if (@player.x > 411 && @player.x < 560) && (@player.y > 0 && @player.y < 98)
+          @player.go_right
+        end
+        if button_down?Gosu::KbA
           enemy_killed?
         end
       end
-      if button_down? Gosu::KbDown then
-        @player.go_down
-        if button_down?Gosu::KbA then
+
+      if button_down? Gosu::KbDown
+        if (@player.x > 411 && @player.x < 560) && (@player.y > 0 && @player.y < 98)
+          @player.go_down
+        end
+        if button_down?Gosu::KbA
+          enemy_killed?
+        end
+      end
+#exclusion boxes
+
+
+
+      if button_down? Gosu::KbLeft
+        if @player.x > 94 && @player.y > 92
+          @player.go_left
+        end
+        if button_down?Gosu::KbA
+          enemy_killed?
+        end
+      end
+      if button_down? Gosu::KbRight
+        if @player.x < 960 && @player.y > 92
+          @player.go_right
+        end
+        if button_down?Gosu::KbA
+          enemy_killed?
+        end
+      end
+      if button_down? Gosu::KbUp
+        if @player.y > 98
+          @player.go_up
+        end
+        if button_down?Gosu::KbA
+          enemy_killed?
+        end
+      end
+      if button_down? Gosu::KbDown
+        if @player.y < 398
+          @player.go_down
+        end
+        if button_down?Gosu::KbA
           enemy_killed?
         end
       end
@@ -97,10 +141,11 @@ class GameWindow < Gosu::Window
       @player.move
       # end
 
-
       @enemy_counter += 1
+
+
       summon_enemies
-      player_life
+
       @enemies.each {|enemy| enemy.update}
       player_killed?
     end
@@ -113,11 +158,19 @@ class GameWindow < Gosu::Window
   end
 
   def draw
+
+
     if @state == :menu
       @menu.draw
     end
 
+
+
     if @state == :running
+
+      @life.each do |heart|
+        heart.draw
+      end
 
       if button_down? Gosu::KbLeft then
         if button_down?Gosu::KbA then
@@ -179,11 +232,10 @@ class GameWindow < Gosu::Window
 
       if @hit == true
         @background.sfx_player_hit.play
+        @life.pop
       end
 
-      @life.each do |heart|
-        heart.draw
-      end
+
 
     end
     #  if @state == :low_health
@@ -232,14 +284,12 @@ class GameWindow < Gosu::Window
 
 
   def player_life
-    @x1 = 733
-    @y1 = 26
+    x1 = 733
+    y1 = 26
     @player_health.times do
-      @life << Life.new(self, @x1, @y1)
-      @x1 += 30
+      @life << Life.new(self, x1, y1)
+      x1 += 30
     end
-
-
   end
 
 
@@ -252,14 +302,12 @@ class GameWindow < Gosu::Window
         @hit = true
         @player_health -= 1
         if @player_health == 0
-        @state = :lose
+          @state = :lose
         end
       end
     end
     @enemies.delete(enemy_hit)
   end
-
-
 
 
   def enemy_killed?
@@ -290,6 +338,7 @@ class GameWindow < Gosu::Window
     @player_score = 0
     @life = Array.new
     @player_health = 4
+    player_life
   end
 
   def button_down(id)

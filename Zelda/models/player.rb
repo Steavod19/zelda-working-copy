@@ -1,4 +1,5 @@
 class Player
+  attr_reader :x, :y
   def initialize(window, x, y)
     @image = Gosu::Image.new(window, "img/zelda_sprites/link.png", false)
     @image_left = Gosu::Image.new(window, "img/zelda_sprites/link_left.png", false)

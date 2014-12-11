@@ -17,21 +17,21 @@ class Background
   end
 
 
-
-
-  def water
-    BoundingBox.new(0, 520, 94, 520)
-  end
-  def tp_right
-    BoundingBox.new(94, 98, 317, 98)
-  end
-  def tp_left
-    BoundingBox.new(600, 98, 400, 98)
-  end
-  def bt_left
-    BoundingBox.new(94, 520, 317, 80)
-  end
-  def bt_right
-    BoundingBox.new(600, 520, 400, 80)
-  end
+#
+#
+#   def water
+#     BoundingBox.new(0, 520, 94, 520)
+#   end
+#   def tp_right
+#     BoundingBox.new(94, 98, 317, 98)
+#   end
+#   def tp_left
+#     BoundingBox.new(600, 98, 400, 98)
+#   end
+#   def bt_left
+#     BoundingBox.new(94, 520, 317, 80)
+#   end
+#   def bt_right
+#     BoundingBox.new(600, 520, 400, 80)
+#   end
 end
