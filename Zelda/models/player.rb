@@ -8,7 +8,8 @@ class Player
     @image_strike_left = Gosu::Image.new(window, "img/zelda_sprites/link_strike_left.png", false)
     @image_strike_up = Gosu::Image.new(window, "img/zelda_sprites/link_up_strike.png", false)
     @image_strike_down = Gosu::Image.new(window, "img/zelda_sprites/link_down_strike.png", false)
-    @x = @y = 0.0
+    @x = 0.0
+    @y = 0.0
     @score = 0
   end
 
@@ -43,10 +44,6 @@ class Player
     BoundingBox.new(@x, @y, 38, 41)
   end
 
-  # def sword_bounds_left
-  #   BoundingBox.new(@x, @y, 20, 10)
-  # end
-
   def sword_bounds_nil
     BoundingBox.new(@x, @y, 0, 0)
   end
@@ -60,11 +57,11 @@ class Player
   end
 
   def sword_bounds_up
-    BoundingBox.new(@x + 10, @y + 26, 13, 29)
+    BoundingBox.new(@x + 10, @y - 26, 15, 29)
   end
 
   def sword_bounds_down
-    BoundingBox.new(@x + 15, @y - 40, 13, 27)
+    BoundingBox.new(@x + 10, @y + 37, 15, 27)
   end
 
 

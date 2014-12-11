@@ -28,8 +28,19 @@ class GameWindow < Gosu::Window
     @state = :menu
     @background = Background.new(self, 0, 0)
     @music = true
-    @score_font = Gosu::Font.new(self, "Gill Sans", 450 / 15)
+    @score_font = Gosu::Font.new(self, "Avenir", 450 / 15)
     @player_score = 0
+    @player_health = 5
+
+
+
+    # @collision = nil
+    # @new_pos = @player.move
+
+
+
+
+
   end
 
   def update
@@ -49,6 +60,11 @@ class GameWindow < Gosu::Window
       @state = :running
     end
 
+    # if @player_score == 5
+    #   @enemy_counter += 1
+    # elsif @player_score == 10
+    #   @enemy_counter += 1
+    # end
 
 
     if @state == :running
@@ -76,7 +92,16 @@ class GameWindow < Gosu::Window
           enemy_killed?
         end
       end
-      @player.move
+
+      # @player.move
+      # borders?
+      # if @collision == true
+      #   player.draw = @new_pos
+      # else
+        @player.move
+      # end
+
+
       @enemy_counter += 1
       summon_enemies
       @enemies.each {|enemy| enemy.update}
@@ -100,7 +125,11 @@ class GameWindow < Gosu::Window
           if button_down?Gosu::KbA then
             @player.draw_strike_left
             @player.sword_bounds_left
-            @background.sfx_sword_swing.play
+            if @result
+              @background.sfx_enemy_die.play
+            else
+              @background.sfx_sword_swing.play
+            end
           else
             @player.draw_left
           end
@@ -108,21 +137,33 @@ class GameWindow < Gosu::Window
           if button_down?Gosu::KbA then
             @player.draw_strike_right
             @player.sword_bounds_right
-            @background.sfx_sword_swing.play
+            if @result
+              @background.sfx_enemy_die.play
+            else
+              @background.sfx_sword_swing.play
+            end
           else
             @player.draw_right
           end
         elsif button_down? Gosu::KbUp then
           if button_down?Gosu::KbA then
             @player.draw_strike_up
-            @background.sfx_sword_swing.play
+            if @result
+              @background.sfx_enemy_die.play
+            else
+              @background.sfx_sword_swing.play
+            end
           else
             @player.draw_up
           end
         elsif button_down? Gosu::KbDown then
           if button_down?Gosu::KbA then
             @player.draw_strike_down
-            @background.sfx_sword_swing.play
+            if @result
+              @background.sfx_enemy_die.play
+            else
+              @background.sfx_sword_swing.play
+            end
           else
             @player.draw
           end
@@ -131,16 +172,20 @@ class GameWindow < Gosu::Window
         end
 
 
-
       @background_image.draw(0, 0, 0)
       @score_font.draw("#{@player_score}", 923, 20, 1.0, 1.0, 1.0, Gosu::Color::BLACK)
-      @enemies.each {|enemy| enemy.draw}
-     end
 
-     if @state == :lose
-      #  @background.sfx_die.play
-      #  @menu.lose_screen.draw
+      @enemies.each do |enemy|
+        enemy.draw
+      end
+
      end
+    #  if @state == :low_health
+    #    @background.sfx_player_health.play(1, -60, true)
+    #  elsif @state == :lose
+      #  @background.sfx_player_health.pause
+      #  @menu.draw
+    #  end
 
   end
 
@@ -165,14 +210,12 @@ class GameWindow < Gosu::Window
       x_spawn = (415..570).to_a
 
       if x_entry_point == 86 || y_entry_point == -30
-        speed = (2..5).to_a
+        speed = (2..3).to_a
       elsif x_entry_point == 1050 || y_entry_point == 540
-        speed = (-5..-2).to_a
+        speed = (-3..-2).to_a
       end
 
-
       number = (1..10).to_a
-
       if number.sample > 5
         @enemies << Enemy.new(self, x_entry_point, y_spawn.sample, :horizontal, speed.sample)
       else
@@ -181,13 +224,20 @@ class GameWindow < Gosu::Window
     end
   end
 
+
   def player_killed?
     @enemies.each do |enemy|
       if enemy.bounds.intersects?(@player.bounds)
-        @state = :lose
+        # @player_health -= 1
+        #   if @player_health == 1
+        #     @state = :low_health
+        #   elsif @player_health == 0
+            @state = :lose
+          # end
       end
     end
   end
+
 
   def enemy_killed?
     @result = false
@@ -201,14 +251,21 @@ class GameWindow < Gosu::Window
       end
     end
     @enemies.delete(dead_enemy)
-
   end
+
+  # def borders?
+  #     if @player.bounds.intersects?(@background.water)
+  #       @collision = true
+  #     end
+  # end
+
+
 
 
 
   # def reset(state)
   #   @menu = Menu.new(self, 0, 0)
-  #   @player = Player.new(self, 400, 50)
+  #   @player = Player.new(self, 0, 0)
   #   # @state = state
   #   @game_end = nil
   # end
@@ -220,6 +277,7 @@ class GameWindow < Gosu::Window
       close
     end
   end
+
 end
 
 
