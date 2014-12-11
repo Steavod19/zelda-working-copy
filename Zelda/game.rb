@@ -1,4 +1,4 @@
-require 'rubygems' # only necessary in Ruby 1.8
+require 'rubygems'
 require 'gosu'
 require 'pry'
 
@@ -7,6 +7,7 @@ require_relative 'models/enemy'
 require_relative 'models/bounding_box'
 require_relative 'models/menu'
 require_relative 'models/background'
+require_relative 'models/life'
 
 
 class GameWindow < Gosu::Window
@@ -30,7 +31,9 @@ class GameWindow < Gosu::Window
     @music = true
     @score_font = Gosu::Font.new(self, "Avenir", 450 / 15)
     @player_score = 0
-    @player_health = 5
+
+    @life = Array.new
+    @player_health = 4
 
 
 
@@ -97,6 +100,7 @@ class GameWindow < Gosu::Window
 
       @enemy_counter += 1
       summon_enemies
+      player_life
       @enemies.each {|enemy| enemy.update}
       player_killed?
     end
@@ -173,6 +177,14 @@ class GameWindow < Gosu::Window
         enemy.draw
       end
 
+      if @hit == true
+        @background.sfx_player_hit.play
+      end
+
+      @life.each do |heart|
+        heart.draw
+      end
+
     end
     #  if @state == :low_health
     #    @background.sfx_player_health.play(1, -60, true)
@@ -219,22 +231,39 @@ class GameWindow < Gosu::Window
   end
 
 
-  def player_killed?
-    @enemies.each do |enemy|
-      if enemy.bounds.intersects?(@player.bounds)
-        # @player_health -= 1
-        #   if @player_health == 1
-        #     @state = :low_health
-        #   elsif @player_health == 0
-        @state = :lose
-        # end
-      end
+  def player_life
+    @x1 = 733
+    @y1 = 26
+    4.times do
+      @life << Life.new(self, @x1, @y1)
+      @x1 += 30
     end
+
+
   end
 
 
+  def player_killed?
+    @hit = nil
+    enemy_hit = nil
+    @enemies.each do |enemy|
+      if enemy.bounds.intersects?(@player.bounds)
+        enemy_hit = enemy
+        @hit = true
+        @player_health -= 1
+        if @player_health == 0
+        @state = :lose
+        end
+      end
+    end
+    @enemies.delete(enemy_hit)
+  end
+
+
+
+
   def enemy_killed?
-    @result = false
+    @result = nil
     dead_enemy = nil
     @enemies.each do |enemy|
       if enemy.bounds.intersects?(@player.sword_bounds_right) || enemy.bounds.intersects?(@player.sword_bounds_left) || enemy.bounds.intersects?(@player.sword_bounds_up) || enemy.bounds.intersects?(@player.sword_bounds_down)
@@ -259,6 +288,8 @@ class GameWindow < Gosu::Window
     @enemies = Array.new
     @enemy_counter = 0
     @player_score = 0
+    @life = Array.new
+    @player_health = 4
   end
 
   def button_down(id)

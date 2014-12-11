@@ -1,6 +1,6 @@
 class Background
 
-  attr_reader :game_music, :menu_music, :sfx_sword_swing, :sfx_enemy_die, :sfx_player_health
+  attr_reader :game_music, :menu_music, :sfx_sword_swing, :sfx_enemy_die, :sfx_player_health, :sfx_player_hit
 
   def initialize(window, x, y)
     @window = window
@@ -12,6 +12,7 @@ class Background
     @sfx_player_die = Gosu::Sample.new(window, 'music/die.wav')
     @sfx_enemy_die = Gosu::Sample.new(window, 'music/loz_kill.wav')
     @sfx_player_health = Gosu::Sample.new(window, 'music/LOZ_LowHealth.wav')
+    @sfx_player_hit = Gosu::Sample.new(window, 'music/LOZ_Hurt.wav')
 
   end
 
