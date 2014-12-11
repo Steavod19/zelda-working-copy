@@ -234,7 +234,7 @@ class GameWindow < Gosu::Window
   def player_life
     @x1 = 733
     @y1 = 26
-    4.times do
+    @player_health.times do
       @life << Life.new(self, @x1, @y1)
       @x1 += 30
     end
