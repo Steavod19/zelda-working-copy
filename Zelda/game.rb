@@ -18,8 +18,8 @@ class GameWindow < Gosu::Window
     self.caption = 'Link Zombie Battle HD2000'
 
     @background_image = Gosu::Image.new(self, "img/water_background.png", true)
-    @player = Player.new(self)
-    @player.warp(320, 240)
+    @player = Player.new(self, 600, 350)
+    @player.warp(500, 240)
     @enemies = Array.new
     @enemy_counter = 0
     # @water_enemies = Array.new
@@ -60,13 +60,6 @@ class GameWindow < Gosu::Window
       @state = :running
     end
 
-    # if @player_score == 5
-    #   @enemy_counter += 1
-    # elsif @player_score == 10
-    #   @enemy_counter += 1
-    # end
-
-
     if @state == :running
       if button_down? Gosu::KbLeft then
         @player.go_left
@@ -98,7 +91,7 @@ class GameWindow < Gosu::Window
       # if @collision == true
       #   player.draw = @new_pos
       # else
-        @player.move
+      @player.move
       # end
 
 
@@ -108,68 +101,69 @@ class GameWindow < Gosu::Window
       player_killed?
     end
 
-    # if @state == :lose
-    #   @enemies.each {|e| e.state == :pause}
-    # end
+    if @state == :lose
+      reset
+      @state = :menu
+    end
 
   end
 
   def draw
-     if @state == :menu
-       @menu.draw
-     end
+    if @state == :menu
+      @menu.draw
+    end
 
-     if @state == :running
+    if @state == :running
 
-        if button_down? Gosu::KbLeft then
-          if button_down?Gosu::KbA then
-            @player.draw_strike_left
-            @player.sword_bounds_left
-            if @result
-              @background.sfx_enemy_die.play
-            else
-              @background.sfx_sword_swing.play
-            end
+      if button_down? Gosu::KbLeft then
+        if button_down?Gosu::KbA then
+          @player.draw_strike_left
+          @player.sword_bounds_left
+          if @result
+            @background.sfx_enemy_die.play
           else
-            @player.draw_left
+            @background.sfx_sword_swing.play
           end
-        elsif button_down? Gosu::KbRight then
-          if button_down?Gosu::KbA then
-            @player.draw_strike_right
-            @player.sword_bounds_right
-            if @result
-              @background.sfx_enemy_die.play
-            else
-              @background.sfx_sword_swing.play
-            end
+        else
+          @player.draw_left
+        end
+      elsif button_down? Gosu::KbRight then
+        if button_down?Gosu::KbA then
+          @player.draw_strike_right
+          @player.sword_bounds_right
+          if @result
+            @background.sfx_enemy_die.play
           else
-            @player.draw_right
+            @background.sfx_sword_swing.play
           end
-        elsif button_down? Gosu::KbUp then
-          if button_down?Gosu::KbA then
-            @player.draw_strike_up
-            if @result
-              @background.sfx_enemy_die.play
-            else
-              @background.sfx_sword_swing.play
-            end
+        else
+          @player.draw_right
+        end
+      elsif button_down? Gosu::KbUp then
+        if button_down?Gosu::KbA then
+          @player.draw_strike_up
+          if @result
+            @background.sfx_enemy_die.play
           else
-            @player.draw_up
+            @background.sfx_sword_swing.play
           end
-        elsif button_down? Gosu::KbDown then
-          if button_down?Gosu::KbA then
-            @player.draw_strike_down
-            if @result
-              @background.sfx_enemy_die.play
-            else
-              @background.sfx_sword_swing.play
-            end
+        else
+          @player.draw_up
+        end
+      elsif button_down? Gosu::KbDown then
+        if button_down?Gosu::KbA then
+          @player.draw_strike_down
+          if @result
+            @background.sfx_enemy_die.play
           else
-            @player.draw
+            @background.sfx_sword_swing.play
           end
         else
           @player.draw
         end
+      else
+        @player.draw
+      end
 
 
       @background_image.draw(0, 0, 0)
@@ -179,12 +173,12 @@ class GameWindow < Gosu::Window
         enemy.draw
       end
 
-     end
+    end
     #  if @state == :low_health
     #    @background.sfx_player_health.play(1, -60, true)
     #  elsif @state == :lose
-      #  @background.sfx_player_health.pause
-      #  @menu.draw
+    #  @background.sfx_player_health.pause
+    #  @menu.draw
     #  end
 
   end
@@ -232,8 +226,8 @@ class GameWindow < Gosu::Window
         #   if @player_health == 1
         #     @state = :low_health
         #   elsif @player_health == 0
-            @state = :lose
-          # end
+        @state = :lose
+        # end
       end
     end
   end
@@ -259,25 +253,19 @@ class GameWindow < Gosu::Window
   #     end
   # end
 
-
-
-
-
-  # def reset(state)
-  #   @menu = Menu.new(self, 0, 0)
-  #   @player = Player.new(self, 0, 0)
-  #   # @state = state
-  #   @game_end = nil
-  # end
-
-
+  def reset
+    @menu = Menu.new(self, 0, 0, @music)
+    @player = Player.new(self, 475, 250)
+    @enemies = Array.new
+    @enemy_counter = 0
+    @player_score = 0
+  end
 
   def button_down(id)
     if id == Gosu::KbEscape
       close
     end
   end
-
 end
 
 

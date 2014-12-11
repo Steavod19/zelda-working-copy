@@ -1,5 +1,5 @@
 class Player
-  def initialize(window)
+  def initialize(window, x, y)
     @image = Gosu::Image.new(window, "img/zelda_sprites/link.png", false)
     @image_left = Gosu::Image.new(window, "img/zelda_sprites/link_left.png", false)
     @image_right = Gosu::Image.new(window, "img/zelda_sprites/link_right.png", false)
@@ -8,8 +8,8 @@ class Player
     @image_strike_left = Gosu::Image.new(window, "img/zelda_sprites/link_strike_left.png", false)
     @image_strike_up = Gosu::Image.new(window, "img/zelda_sprites/link_up_strike.png", false)
     @image_strike_down = Gosu::Image.new(window, "img/zelda_sprites/link_down_strike.png", false)
-    @x = 0.0
-    @y = 0.0
+    @x = x
+    @y = y
     @score = 0
   end
 
