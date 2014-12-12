@@ -40,6 +40,12 @@ class GameWindow < Gosu::Window
     # @collision = nil
     # @new_pos = @player.move
 
+    @bounds_arr = [BoundingBox.new(0, 520, 94, 520),
+    BoundingBox.new(94, 98, 317, 98),
+    BoundingBox.new(600, 98, 400, 98),
+    BoundingBox.new(94, 520, 317, 80),
+    BoundingBox.new(600, 520, 400, 80)]
+
   end
 
   def update
@@ -60,78 +66,42 @@ class GameWindow < Gosu::Window
     end
 
     if @state == :running
-#exclusion boxes
-      if button_down? Gosu::KbUp
-        if (@player.x > 411 && @player.x < 560) && (@player.y > 0 && @player.y < 99)
-          @player.go_up
-        end
-        if button_down?Gosu::KbA
-          enemy_killed?
-        end
-      end
 
-      if button_down? Gosu::KbLeft
-        if (@player.x > 411 && @player.x < 560) && (@player.y > 0 && @player.y < 98)
-          @player.go_left
-        end
-        if button_down?Gosu::KbA
-          enemy_killed?
-        end
-      end
+    if @collision != true
 
-      if button_down? Gosu::KbRight
-        if (@player.x > 411 && @player.x < 560) && (@player.y > 0 && @player.y < 98)
-          @player.go_right
-        end
-        if button_down?Gosu::KbA
-          enemy_killed?
-        end
-      end
+          if button_down? Gosu::KbLeft
+    #        if @player.x > 94 && @player.y > 92
+              @player.go_left
+              if button_down?Gosu::KbA
+                enemy_killed?
+              end
+          end
 
-      if button_down? Gosu::KbDown
-        if (@player.x > 411 && @player.x < 560) && (@player.y > 0 && @player.y < 98)
-          @player.go_down
-        end
-        if button_down?Gosu::KbA
-          enemy_killed?
-        end
-      end
-#exclusion boxes
-
-
-
-      if button_down? Gosu::KbLeft
-        if @player.x > 94 && @player.y > 92
-          @player.go_left
-        end
-        if button_down?Gosu::KbA
-          enemy_killed?
-        end
-      end
-      if button_down? Gosu::KbRight
-        if @player.x < 960 && @player.y > 92
-          @player.go_right
-        end
-        if button_down?Gosu::KbA
-          enemy_killed?
-        end
-      end
-      if button_down? Gosu::KbUp
-        if @player.y > 98
-          @player.go_up
-        end
-        if button_down?Gosu::KbA
-          enemy_killed?
-        end
-      end
-      if button_down? Gosu::KbDown
-        if @player.y < 398
-          @player.go_down
-        end
-        if button_down?Gosu::KbA
-          enemy_killed?
-        end
-      end
+          if button_down? Gosu::KbRight
+    #        if @player.x < 960 && @player.y > 92
+              @player.go_right
+    #        end
+            if button_down?Gosu::KbA
+              enemy_killed?
+            end
+          end
+          if button_down? Gosu::KbUp
+    #        if @player.y > 98
+              @player.go_up
+    #        end
+            if button_down?Gosu::KbA
+              enemy_killed?
+            end
+          end
+          if button_down? Gosu::KbDown
+    #        if @player.y < 398
+              @player.go_down
+    #        end
+            if button_down?Gosu::KbA
+              enemy_killed?
+            end
+          end
+    end
 
       # @player.move
       # borders?
@@ -148,6 +118,7 @@ class GameWindow < Gosu::Window
 
       @enemies.each {|enemy| enemy.update}
       player_killed?
+      borders?
     end
 
     if @state == :lose
@@ -324,11 +295,17 @@ class GameWindow < Gosu::Window
     @enemies.delete(dead_enemy)
   end
 
-  # def borders?
-  #     if @player.bounds.intersects?(@background.water)
-  #       @collision = true
-  #     end
-  # end
+
+
+
+  def borders?
+    @collion = nil
+    @bounds_arr.each do |nono_square|
+      if @player.bounds.intersects?(nono_square)
+       @collision = true
+      end
+    end
+  end
 
   def reset
     @menu = Menu.new(self, 0, 0, @music)

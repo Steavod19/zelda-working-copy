@@ -14,8 +14,6 @@ class Menu
 
   def draw
     @title.draw(@x, @y, 0)
-    # @window.music == true ? @music_value = "ON" : @music_value = "OFF"
-
   end
 
   def update
