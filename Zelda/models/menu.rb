@@ -1,5 +1,5 @@
 class Menu
-  attr_accessor :selection, :music
+  attr_accessor :music
 
   def initialize(window, x, y, music)
     @window = window
@@ -7,7 +7,6 @@ class Menu
     @x = x
     @music = music
 
-    @title = Gosu::Image.new(window, 'img/title_screen.png')
     @menu_action = nil
 
   end
@@ -15,8 +14,8 @@ class Menu
   def draw
     @title.draw(@x, @y, 0)
   end
-
-  def update
-    @menu_action
-  end
+  # 
+  # def update
+  #   @menu_action
+  # end
 end

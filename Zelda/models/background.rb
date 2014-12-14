@@ -1,6 +1,6 @@
 class Background
 
-  attr_reader :game_music, :menu_music, :sfx_sword_swing, :sfx_enemy_die, :sfx_player_health, :sfx_player_hit
+  attr_reader :game_music, :menu_music, :sfx_sword_swing, :sfx_enemy_die, :sfx_player_health, :sfx_player_hit, :water
 
   def initialize(window, x, y)
     @window = window
@@ -21,10 +21,6 @@ class Background
 #
   def water
     BoundingBox.new(0, 520, 94, 520)
-    BoundingBox.new(94, 98, 317, 98)
-    BoundingBox.new(600, 98, 400, 98)
-    BoundingBox.new(94, 520, 317, 80)
-    BoundingBox.new(600, 520, 400, 80)
   end
   def tp_right
     BoundingBox.new(94, 98, 317, 98)

@@ -18,20 +18,26 @@ class Player
     @x, @y = x, y
   end
 
+
+  def stop
+    @x = x
+    @y = y
+  end
+
   def go_left
-    @x -= 3
+    @x -= 2
   end
 
   def go_right
-    @x += 3
+    @x += 2
   end
 
   def go_up
-    @y -= 3
+    @y -= 2
   end
 
   def go_down
-    @y += 3
+    @y += 2
   end
 
   def move

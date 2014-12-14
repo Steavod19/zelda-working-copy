@@ -17,43 +17,53 @@ class GameWindow < Gosu::Window
   def initialize
     super(1000, 520, false)
     self.caption = 'Link Zombie Battle HD2000'
-
     @background_image = Gosu::Image.new(self, "img/water_background.png", true)
+    @title = Gosu::Image.new(self, 'img/title_screen.png')
+    @instructions = Gosu::Image.new(self, 'img/instructions.png')
+    @game_over = Gosu::Image.new(self, 'img/game_over.png')
     @player = Player.new(self, 600, 350)
     @player.warp(500, 240)
     @enemies = Array.new
     @enemy_counter = 0
     # @water_enemies = Array.new
     # @water_enemies_counter = 0
-    @menu = Menu.new(self, 0, 0, @music)
+    # @menu = Menu.new(self, 0, 0, @music, @image)
     @state = :menu
     @background = Background.new(self, 0, 0)
     @music = true
     @score_font = Gosu::Font.new(self, "Avenir", 450 / 15)
     @player_score = 0
-
     @life = Array.new
     @player_health = 4
     player_life
-    # binding.pry
+
+    @heart_arr = Array.new
+    @heart_counter = 0
 
     # @collision = nil
     # @new_pos = @player.move
 
-    @bounds_arr = [BoundingBox.new(0, 520, 94, 520),
-    BoundingBox.new(94, 98, 317, 98),
-    BoundingBox.new(600, 98, 400, 98),
-    BoundingBox.new(94, 520, 317, 80),
-    BoundingBox.new(600, 520, 400, 80)]
+    # @bounds_arr = [BoundingBox.new(0, 520, 94, 520),
+    # BoundingBox.new(94, 98, 317, 98),
+    # BoundingBox.new(600, 98, 400, 98),
+    # BoundingBox.new(94, 520, 317, 80),
+    # BoundingBox.new(600, 520, 400, 80)]
 
   end
 
   def update
-    if @state == :menu
+    if @state == :menu || @state == :instructions
       @background.menu_music.play
     else
       @background.menu_music.pause
     end
+
+    # if @state == :instructions
+    #   @background.menu_music.play
+    # else
+    #   @background.menu_music.pause
+    # end
+
 
     if @state == :running
       @background.game_music.play
@@ -61,48 +71,66 @@ class GameWindow < Gosu::Window
       @background.game_music.pause
     end
 
-    if button_down? Gosu::KbSpace
-      @state = :running
+    # if @state == :game_over
+    #   @background.menu_music.play
+    # else
+    #   @background.menu_music.pause
+    # end
+
+    if @state == :menu
+      if button_down? Gosu::KbSpace
+        @state = :instructions
+      end
     end
+
+    if @state == :instructions
+      if button_down? Gosu::KbReturn
+        @state = :running
+      end
+    end
+
+    if @state == :game_over
+      if button_down? Gosu::KbReturn
+        @state = :lose
+      end
+    end
+
 
     if @state == :running
 
-    if @collision != true
-
+      # if @background.water.collide?(@player.x, @player.y)
+      #   @player.stop
+      # else
           if button_down? Gosu::KbLeft
-    #        if @player.x > 94 && @player.y > 92
-              @player.go_left
-              if button_down?Gosu::KbA
-                enemy_killed?
-              end
+            @player.go_left
+            if button_down?Gosu::KbA
+              enemy_killed?
+
+            end
           end
 
           if button_down? Gosu::KbRight
-    #        if @player.x < 960 && @player.y > 92
-              @player.go_right
-    #        end
+            @player.go_right
             if button_down?Gosu::KbA
               enemy_killed?
+
             end
           end
           if button_down? Gosu::KbUp
-    #        if @player.y > 98
-              @player.go_up
-    #        end
+            @player.go_up
             if button_down?Gosu::KbA
               enemy_killed?
+
             end
           end
           if button_down? Gosu::KbDown
-    #        if @player.y < 398
-              @player.go_down
-    #        end
+            @player.go_down
             if button_down?Gosu::KbA
               enemy_killed?
+
             end
           end
-    end
-
+      # end
       # @player.move
       # borders?
       # if @collision == true
@@ -110,15 +138,27 @@ class GameWindow < Gosu::Window
       # else
       @player.move
       # end
-
       @enemy_counter += 1
+      @heart_counter += 1
 
 
+
+
+#enemy
       summon_enemies
-
       @enemies.each {|enemy| enemy.update}
       player_killed?
-      borders?
+
+#health
+      drop_heart
+
+       heart_pickup?
+        if @health_increase
+            player_life
+        end
+
+#health
+
     end
 
     if @state == :lose
@@ -128,13 +168,22 @@ class GameWindow < Gosu::Window
 
   end
 
+
+
+
   def draw
 
-
     if @state == :menu
-      @menu.draw
+      @title.draw(0, 0, 1)
     end
 
+    if @state == :instructions
+      @instructions.draw(0, 0, 3)
+    end
+
+    if @state == :game_over
+      @game_over.draw(0, 0, 1)
+    end
 
 
     if @state == :running
@@ -201,6 +250,10 @@ class GameWindow < Gosu::Window
         enemy.draw
       end
 
+      @heart_arr.each do |heart|
+        heart.draw
+      end
+
       if @hit == true
         @background.sfx_player_hit.play
         @life.pop
@@ -226,9 +279,9 @@ class GameWindow < Gosu::Window
     x_entry_point = [86, 1050].sample
     y_entry_point = [-30, 540].sample
 
-    if @enemy_counter % 60 == 0
+    if @enemy_counter % 50 == 0
       y_spawn_arr = Array.new
-      points_arr = [101..130, 192..220, 296..305, 392..400]
+      points_arr = [110..120, 200..210, 290..300, 380..390]
 
       points_arr.each do |x|
         y_spawn_arr << x.to_a
@@ -236,30 +289,30 @@ class GameWindow < Gosu::Window
 
       y_spawn = y_spawn_arr.flatten!
 
-      x_spawn = (415..570).to_a
+      x_spawn = (415..560).to_a
 
       if x_entry_point == 86 || y_entry_point == -30
         speed = (2..3).to_a
+        if x_entry_point == 86
+          image = Gosu::Image.new(self, "img/enemy_right.png", false)
+        elsif y_entry_point == -30
+          image = Gosu::Image.new(self, "img/enemy_down.png", false)
+        end
       elsif x_entry_point == 1050 || y_entry_point == 540
         speed = (-3..-2).to_a
+        if x_entry_point == 1050
+          image = Gosu::Image.new(self, "img/enemy.png", false)
+        elsif y_entry_point == 540
+          image = Gosu::Image.new(self, "img/enemy_up.png", false)
+        end
       end
 
       number = (1..10).to_a
       if number.sample > 5
-        @enemies << Enemy.new(self, x_entry_point, y_spawn.sample, :horizontal, speed.sample)
+        @enemies << Enemy.new(self, x_entry_point, y_spawn.sample, :horizontal, speed.sample, image)
       else
-        @enemies << Enemy.new(self, x_spawn.sample, y_entry_point, :vertical, speed.sample)
+        @enemies << Enemy.new(self, x_spawn.sample, y_entry_point, :vertical, speed.sample, image)
       end
-    end
-  end
-
-
-  def player_life
-    x1 = 733
-    y1 = 26
-    @player_health.times do
-      @life << Life.new(self, x1, y1)
-      x1 += 30
     end
   end
 
@@ -273,7 +326,7 @@ class GameWindow < Gosu::Window
         @hit = true
         @player_health -= 1
         if @player_health == 0
-          @state = :lose
+          @state = :game_over
         end
       end
     end
@@ -295,17 +348,48 @@ class GameWindow < Gosu::Window
     @enemies.delete(dead_enemy)
   end
 
-
-
-
-  def borders?
-    @collion = nil
-    @bounds_arr.each do |nono_square|
-      if @player.bounds.intersects?(nono_square)
-       @collision = true
-      end
+  def player_life
+    x1 = 733
+    y1 = 26
+    @player_health.times do
+      @life << Life.new(self, x1, y1)
+      x1 += 30
     end
   end
+
+  def drop_heart
+    if @heart_counter % 600 == 0
+      x_number = (110..900).to_a
+      y_number = (110..420).to_a
+      @heart_arr << Life.new(self, x_number.sample, y_number.sample)
+    end
+  end
+
+  def heart_pickup?
+    @health_increase = nil
+    heart_in_arr = nil
+    @heart_arr.each do |heart|
+      if heart.bounds.intersects?(@player.bounds)
+        heart_in_arr = heart
+        @health_increase = true
+        if @player_health < 4
+          @player_health += 1
+        end
+        break
+      end
+    end
+    @heart_arr.delete(heart_in_arr)
+  end
+
+
+    # def borders?
+    #   @collion = nil
+    #   @bounds_arr.each do |nono_square|
+    #     if @player.bounds.intersects?(nono_square)
+    #      @collision = true
+    #     end
+    #   end
+    # end
 
   def reset
     @menu = Menu.new(self, 0, 0, @music)
@@ -316,6 +400,7 @@ class GameWindow < Gosu::Window
     @life = Array.new
     @player_health = 4
     player_life
+    @heart_counter = 0
   end
 
   def button_down(id)

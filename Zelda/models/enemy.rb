@@ -1,6 +1,7 @@
 class Enemy
-  def initialize(window, x, y, direction, speed)
-    @image = Gosu::Image.new(window, "img/enemy.png", false)
+  attr_reader :x, :y
+  def initialize(window, x, y, direction, speed, image)
+    # @image = Gosu::Image.new(window, "img/enemy.png", false)
     # @image_right = Gosu::Image.new(window, "img/enemy_right.png", false)
     # @swim_enemy = Gosu::Image.new(window, "img/swim_enemy.png", false)
     @x = x
@@ -8,7 +9,7 @@ class Enemy
     @direction = direction
     @speed = speed
     @window = window
-
+    @image = image
   end
 
   def bounds
