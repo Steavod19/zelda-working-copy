@@ -1,3 +1,11 @@
+#  todo:
+  #  water enemy / bullets
+  #  **  fix health meter increase and decrease  **
+  #  put spawned hearts on a timer
+  #  difficulty increase
+  #  boarder collisions
+  #  two hit enemies
+
 require 'rubygems'
 require 'gosu'
 require 'pry'
@@ -71,11 +79,11 @@ class GameWindow < Gosu::Window
       @background.game_music.pause
     end
 
-    # if @state == :game_over
-    #   @background.menu_music.play
-    # else
-    #   @background.menu_music.pause
-    # end
+    if @state == :game_over
+      @background.game_over_music.play
+    else
+      @background.game_over_music.pause
+    end
 
     if @state == :menu
       if button_down? Gosu::KbSpace
@@ -101,12 +109,20 @@ class GameWindow < Gosu::Window
       # if @background.water.collide?(@player.x, @player.y)
       #   @player.stop
       # else
-          if button_down? Gosu::KbLeft
-            @player.go_left
-            if button_down?Gosu::KbA
-              enemy_killed?
 
-            end
+
+      # borders?
+      # if @collision == true
+      #   @player.stop
+      # end
+
+          if button_down? Gosu::KbLeft
+            # if @collision != true
+              @player.go_left
+              if button_down?Gosu::KbA
+                enemy_killed?
+              end
+          #   end
           end
 
           if button_down? Gosu::KbRight
@@ -130,14 +146,12 @@ class GameWindow < Gosu::Window
 
             end
           end
-      # end
-      # @player.move
-      # borders?
-      # if @collision == true
-      #   player.draw = @new_pos
-      # else
-      @player.move
-      # end
+
+
+
+        @player.move
+
+
       @enemy_counter += 1
       @heart_counter += 1
 
@@ -259,7 +273,9 @@ class GameWindow < Gosu::Window
         @life.pop
       end
 
-
+      if @health_increase == true
+        @background.sfx_player_life.play
+      end
 
     end
     #  if @state == :low_health

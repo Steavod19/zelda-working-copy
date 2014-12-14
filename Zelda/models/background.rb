@@ -1,6 +1,6 @@
 class Background
 
-  attr_reader :game_music, :menu_music, :sfx_sword_swing, :sfx_enemy_die, :sfx_player_health, :sfx_player_hit, :water
+  attr_reader :sfx_player_life, :game_over_music, :game_music, :menu_music, :sfx_sword_swing, :sfx_enemy_die, :sfx_player_health, :sfx_player_hit, :water
 
   def initialize(window, x, y)
     @window = window
@@ -8,17 +8,16 @@ class Background
     @x = x
     @game_music = Gosu::Song.new(window, 'music/overworld.mp3')
     @menu_music = Gosu::Song.new(window, 'music/intro.mp3')
+    @game_over_music = Gosu::Song.new(window, 'music/game_over.mp3')
     @sfx_sword_swing = Gosu::Sample.new(window, 'music/LOZ_sword.wav')
     @sfx_player_die = Gosu::Sample.new(window, 'music/die.wav')
     @sfx_enemy_die = Gosu::Sample.new(window, 'music/loz_kill.wav')
     @sfx_player_health = Gosu::Sample.new(window, 'music/LOZ_LowHealth.wav')
     @sfx_player_hit = Gosu::Sample.new(window, 'music/LOZ_Hurt.wav')
+    @sfx_player_life = Gosu::Sample.new(window, 'music/LOZ_Get_Heart.wav')
 
   end
 
-
-#
-#
   def water
     BoundingBox.new(0, 520, 94, 520)
   end
