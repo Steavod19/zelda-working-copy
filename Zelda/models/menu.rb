@@ -14,8 +14,5 @@ class Menu
   def draw
     @title.draw(@x, @y, 0)
   end
-  # 
-  # def update
-  #   @menu_action
-  # end
+
 end

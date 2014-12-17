@@ -35,7 +35,6 @@ class GameWindow < Gosu::Window
     @enemy_counter = 0
     # @water_enemies = Array.new
     # @water_enemies_counter = 0
-    # @menu = Menu.new(self, 0, 0, @music, @image)
     @state = :menu
     @background = Background.new(self, 0, 0)
     @music = true
@@ -65,13 +64,6 @@ class GameWindow < Gosu::Window
     else
       @background.menu_music.pause
     end
-
-    # if @state == :instructions
-    #   @background.menu_music.play
-    # else
-    #   @background.menu_music.pause
-    # end
-
 
     if @state == :running
       @background.game_music.play
@@ -109,7 +101,6 @@ class GameWindow < Gosu::Window
       # if @background.water.collide?(@player.x, @player.y)
       #   @player.stop
       # else
-
 
       # borders?
       # if @collision == true
@@ -152,25 +143,19 @@ class GameWindow < Gosu::Window
         @player.move
 
 
-      @enemy_counter += 1
-      @heart_counter += 1
-
-
-
-
 #enemy
+      @enemy_counter += 1
       summon_enemies
       @enemies.each {|enemy| enemy.update}
       player_killed?
 
 #health
+      @heart_counter += 1
       drop_heart
-
-       heart_pickup?
-        if @health_increase
-            player_life
-        end
-
+      heart_pickup?
+      if @health_increase
+          player_life
+      end
 #health
 
     end
@@ -276,20 +261,9 @@ class GameWindow < Gosu::Window
       if @health_increase == true
         @background.sfx_player_life.play
       end
-
     end
-    #  if @state == :low_health
-    #    @background.sfx_player_health.play(1, -60, true)
-    #  elsif @state == :lose
-    #  @background.sfx_player_health.pause
-    #  @menu.draw
-    #  end
-
   end
 
-  # def summon_water_enemies
-  #
-  # end
 
   def summon_enemies
     x_entry_point = [86, 1050].sample
@@ -364,20 +338,20 @@ class GameWindow < Gosu::Window
     @enemies.delete(dead_enemy)
   end
 
+  def drop_heart
+    if @heart_counter % 400 == 0
+      x_number = (110..900).to_a
+      y_number = (110..420).to_a
+      @heart_arr << Life.new(self, x_number.sample, y_number.sample)
+    end
+  end
+
   def player_life
     x1 = 733
     y1 = 26
     @player_health.times do
       @life << Life.new(self, x1, y1)
       x1 += 30
-    end
-  end
-
-  def drop_heart
-    if @heart_counter % 600 == 0
-      x_number = (110..900).to_a
-      y_number = (110..420).to_a
-      @heart_arr << Life.new(self, x_number.sample, y_number.sample)
     end
   end
 
@@ -396,7 +370,6 @@ class GameWindow < Gosu::Window
     end
     @heart_arr.delete(heart_in_arr)
   end
-
 
     # def borders?
     #   @collion = nil
@@ -417,6 +390,8 @@ class GameWindow < Gosu::Window
     @player_health = 4
     player_life
     @heart_counter = 0
+    @heart_arr = Array.new
+
   end
 
   def button_down(id)
