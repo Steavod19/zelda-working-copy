@@ -13,7 +13,4 @@ class Life
   def bounds
     BoundingBox.new(@x, @y, 20, 22)
   end
-
-
-
 end

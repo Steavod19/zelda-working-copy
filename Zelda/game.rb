@@ -25,25 +25,32 @@ class GameWindow < Gosu::Window
   def initialize
     super(1000, 520, false)
     self.caption = 'Link Zombie Battle HD2000'
+
+    # Background Images
     @background_image = Gosu::Image.new(self, "img/water_background.png", true)
     @title = Gosu::Image.new(self, 'img/title_screen.png')
     @instructions = Gosu::Image.new(self, 'img/instructions.png')
     @game_over = Gosu::Image.new(self, 'img/game_over.png')
-    @player = Player.new(self, 600, 350)
-    @player.warp(500, 240)
+    @background = Background.new(self, 0, 0)
+    @score_font = Gosu::Font.new(self, "Avenir", 450 / 15)
+    @state = :menu
+    @music = true
+
+    # Player Stuff
+    @player = Player.new(self, 500, 240)
+    @player_score = 0
+
+    # Enemies
     @enemies = Array.new
     @enemy_counter = 0
-    # @water_enemies = Array.new
-    # @water_enemies_counter = 0
-    @state = :menu
-    @background = Background.new(self, 0, 0)
-    @music = true
-    @score_font = Gosu::Font.new(self, "Avenir", 450 / 15)
-    @player_score = 0
-    @life = Array.new
-    @player_health = 4
-    player_life
 
+    # array that has 4 hearts at the top
+    @life = Array.new
+
+    # how many hearts go into the array
+    @player_health = 4
+
+    player_life
     @heart_arr = Array.new
     @heart_counter = 0
 
@@ -95,69 +102,48 @@ class GameWindow < Gosu::Window
       end
     end
 
-
     if @state == :running
+      if button_down? Gosu::KbLeft
+        @player.go_left
+        if button_down?Gosu::KbA
+          enemy_killed?
+        end
+      end
 
-      # if @background.water.collide?(@player.x, @player.y)
-      #   @player.stop
-      # else
+      if button_down? Gosu::KbRight
+        @player.go_right
+        if button_down?Gosu::KbA
+          enemy_killed?
 
-      # borders?
-      # if @collision == true
-      #   @player.stop
-      # end
+        end
+      end
+      if button_down? Gosu::KbUp
+        @player.go_up
+        if button_down?Gosu::KbA
+          enemy_killed?
 
-          if button_down? Gosu::KbLeft
-            # if @collision != true
-              @player.go_left
-              if button_down?Gosu::KbA
-                enemy_killed?
-              end
-          #   end
-          end
+        end
+      end
+      if button_down? Gosu::KbDown
+        @player.go_down
+        if button_down?Gosu::KbA
+          enemy_killed?
 
-          if button_down? Gosu::KbRight
-            @player.go_right
-            if button_down?Gosu::KbA
-              enemy_killed?
+        end
+      end
 
-            end
-          end
-          if button_down? Gosu::KbUp
-            @player.go_up
-            if button_down?Gosu::KbA
-              enemy_killed?
+      @player.move
 
-            end
-          end
-          if button_down? Gosu::KbDown
-            @player.go_down
-            if button_down?Gosu::KbA
-              enemy_killed?
-
-            end
-          end
-
-
-
-        @player.move
-
-
-#enemy
+      #enemy
       @enemy_counter += 1
       summon_enemies
       @enemies.each {|enemy| enemy.update}
       player_killed?
 
-#health
+      #health
       @heart_counter += 1
       drop_heart
       heart_pickup?
-      if @health_increase
-          player_life
-      end
-#health
-
     end
 
     if @state == :lose
@@ -195,7 +181,7 @@ class GameWindow < Gosu::Window
         if button_down?Gosu::KbA then
           @player.draw_strike_left
           @player.sword_bounds_left
-          if @result
+          if @enemy_death_sound
             @background.sfx_enemy_die.play
           else
             @background.sfx_sword_swing.play
@@ -207,7 +193,7 @@ class GameWindow < Gosu::Window
         if button_down?Gosu::KbA then
           @player.draw_strike_right
           @player.sword_bounds_right
-          if @result
+          if @enemy_death_sound
             @background.sfx_enemy_die.play
           else
             @background.sfx_sword_swing.play
@@ -218,7 +204,7 @@ class GameWindow < Gosu::Window
       elsif button_down? Gosu::KbUp then
         if button_down?Gosu::KbA then
           @player.draw_strike_up
-          if @result
+          if @enemy_death_sound
             @background.sfx_enemy_die.play
           else
             @background.sfx_sword_swing.play
@@ -229,7 +215,7 @@ class GameWindow < Gosu::Window
       elsif button_down? Gosu::KbDown then
         if button_down?Gosu::KbA then
           @player.draw_strike_down
-          if @result
+          if @enemy_death_sound
             @background.sfx_enemy_die.play
           else
             @background.sfx_sword_swing.play
@@ -266,42 +252,28 @@ class GameWindow < Gosu::Window
 
 
   def summon_enemies
-    x_entry_point = [86, 1050].sample
-    y_entry_point = [-30, 540].sample
 
     if @enemy_counter % 50 == 0
       y_spawn_arr = Array.new
       points_arr = [110..120, 200..210, 290..300, 380..390]
-
       points_arr.each do |x|
         y_spawn_arr << x.to_a
       end
+      y_spawn = y_spawn_arr.flatten!.sample
+      x_spawn = (415..560).to_a.sample
 
-      y_spawn = y_spawn_arr.flatten!
+      direction = [:horizontal_left, :horizontal_right,
+       :vertical_top, :vertical_bottom].sample
 
-      x_spawn = (415..560).to_a
-
-      if x_entry_point == 86 || y_entry_point == -30
-        speed = (2..3).to_a
-        if x_entry_point == 86
-          image = Gosu::Image.new(self, "img/enemy_right.png", false)
-        elsif y_entry_point == -30
-          image = Gosu::Image.new(self, "img/enemy_down.png", false)
-        end
-      elsif x_entry_point == 1050 || y_entry_point == 540
-        speed = (-3..-2).to_a
-        if x_entry_point == 1050
-          image = Gosu::Image.new(self, "img/enemy.png", false)
-        elsif y_entry_point == 540
-          image = Gosu::Image.new(self, "img/enemy_up.png", false)
-        end
-      end
-
-      number = (1..10).to_a
-      if number.sample > 5
-        @enemies << Enemy.new(self, x_entry_point, y_spawn.sample, :horizontal, speed.sample, image)
-      else
-        @enemies << Enemy.new(self, x_spawn.sample, y_entry_point, :vertical, speed.sample, image)
+      case direction
+      when :horizontal_left
+        @enemies << Enemy.new(self, 86, y_spawn, :horizontal_left)
+      when :horizontal_right
+        @enemies << Enemy.new(self, 1050, y_spawn, :horizontal_right)
+      when :vertical_top
+        @enemies << Enemy.new(self, x_spawn, -30, :vertical_top)
+      when :vertical_bottom
+        @enemies << Enemy.new(self, x_spawn, 540, :vertical_bottom)
       end
     end
   end
@@ -325,14 +297,13 @@ class GameWindow < Gosu::Window
 
 
   def enemy_killed?
-    @result = nil
+    @enemy_death_sound = nil
     dead_enemy = nil
     @enemies.each do |enemy|
       if enemy.bounds.intersects?(@player.sword_bounds_right) || enemy.bounds.intersects?(@player.sword_bounds_left) || enemy.bounds.intersects?(@player.sword_bounds_up) || enemy.bounds.intersects?(@player.sword_bounds_down)
         dead_enemy = enemy
-        @result = true
+        @enemy_death_sound = true
         @player_score += 1
-        break
       end
     end
     @enemies.delete(dead_enemy)
@@ -340,17 +311,17 @@ class GameWindow < Gosu::Window
 
   def drop_heart
     if @heart_counter % 400 == 0
-      x_number = (110..900).to_a
-      y_number = (110..420).to_a
-      @heart_arr << Life.new(self, x_number.sample, y_number.sample)
+      x_number = (110..900).to_a.sample
+      y_number = (110..420).to_a.sample
+      @heart_arr << Life.new(self, x_number, y_number)
     end
   end
 
   def player_life
     x1 = 733
-    y1 = 26
+    @life.clear
     @player_health.times do
-      @life << Life.new(self, x1, y1)
+      @life << Life.new(self, x1, 26)
       x1 += 30
     end
   end
@@ -364,8 +335,8 @@ class GameWindow < Gosu::Window
         @health_increase = true
         if @player_health < 4
           @player_health += 1
+          player_life
         end
-        break
       end
     end
     @heart_arr.delete(heart_in_arr)
