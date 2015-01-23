@@ -18,7 +18,6 @@ class Player
     @x, @y = x, y
   end
 
-
   def stop
     @x = x
     @y = y

@@ -53,7 +53,6 @@ class GameWindow < Gosu::Window
     player_life
     @heart_arr = Array.new
     @heart_counter = 0
-
     # @collision = nil
     # @new_pos = @player.move
 
@@ -313,8 +312,10 @@ class GameWindow < Gosu::Window
     if @heart_counter % 400 == 0
       x_number = (110..900).to_a.sample
       y_number = (110..420).to_a.sample
-      @heart_arr << Life.new(self, x_number, y_number)
+      @temp_heart = Life.new(self, x_number, y_number)
+      @heart_arr << @temp_heart
     end
+
   end
 
   def player_life

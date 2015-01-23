@@ -7,8 +7,6 @@ class Menu
     @x = x
     @music = music
 
-    @menu_action = nil
-
   end
 
   def draw
